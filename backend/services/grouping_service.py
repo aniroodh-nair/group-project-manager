@@ -1,4 +1,4 @@
-from models import Student
+from backend.models import Student
 from collections import defaultdict
 
 def get_students():
@@ -29,7 +29,7 @@ def create_groups(students, group_size):
 
     return groups
 
-from models import db, ProjectGroup, GroupMember
+from backend.models import db, ProjectGroup, GroupMember
 
 def save_groups(groups):
     for g in groups:
