@@ -1,3 +1,4 @@
+from flask import render_template
 from flask import Flask, jsonify
 from backend.models import db
 from backend.services.grouping_service import get_students, create_groups, save_groups
@@ -18,7 +19,7 @@ with app.app_context():
 # Test route
 @app.route("/")
 def home():
-    return "Server is running"
+    return render_template("index.html")
 
 
 # Group generation route
