@@ -29,3 +29,16 @@ def create_groups(students, group_size):
 
     return groups
 
+from models import db, ProjectGroup, GroupMember
+
+def save_groups(groups):
+    for g in groups:
+        group = ProjectGroup()
+        db.session.add(group)
+        db.session.flush()
+
+        for student in g:
+            member = GroupMember(student_id=student["id"], group_id=group.id)
+            db.session.add(member)
+
+    db.session.commit()
