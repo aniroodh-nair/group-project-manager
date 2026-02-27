@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Group Project Manager</title>
+</head>
+<body style="font-family: Arial; text-align:center; margin-top:100px">
+
+    <h1>Group Project Manager</h1>
+
+    <button onclick="generateGroups()" style="padding:15px 30px; font-size:18px">
+        Generate Groups
+    </button>
+
+    <h2 id="result"></h2>
+
+<script>
+async function generateGroups() {
+    const res = await fetch("/generate-groups");
+    const data = await res.json();
+    document.getElementById("result").innerText = data.message;
+}
+</script>
+
+</body>
+</html>
