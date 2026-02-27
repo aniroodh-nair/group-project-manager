@@ -1,93 +1,128 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Student Profile</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Student Profile</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
-            font-family: Arial, sans-serif;
-            background: #f5f7fb;
-            margin: 0;
-            padding: 0;
-        }
-        .container {
-            max-width: 520px;
-            margin: 48px auto;
-            background: #fff;
-            padding: 28px 32px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
-        }
-        h2 {
-            margin-top: 0;
-            color: #1f2a44;
-        }
-        label {
-            display: block;
-            margin: 14px 0 6px;
-            font-weight: 600;
-        }
-        input, select {
-            width: 100%;
-            padding: 10px 12px;
-            border-radius: 8px;
-            border: 1px solid #ccd3e0;
-            font-size: 14px;
-        }
-        button {
-            margin-top: 18px;
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background: #2d6cdf;
-            color: #fff;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .error {
-            background: #ffecec;
-            border: 1px solid #ffb3b3;
-            color: #a10000;
-            padding: 10px 12px;
-            border-radius: 8px;
-            margin-bottom: 14px;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
         }
     </style>
 </head>
-<body>
+<body class="bg-gray-50">
+    <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-md w-full">
+            <!-- Header -->
+            <div class="text-center mb-8">
+                <i class="fas fa-user-graduate text-4xl text-indigo-600 mb-4"></i>
+                <h2 class="text-3xl font-bold text-gray-900">Create Student Profile</h2>
+                <p class="mt-2 text-sm text-gray-600">Fill in the details to add a new student profile</p>
+            </div>
 
-    <div class="container">
-        <h2>Create Your Student Profile</h2>
+            <!-- Card Container -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="px-6 py-8">
+                    {% if error %}
+                    <div class="mb-6 bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
+                        <div class="flex">
+                            <i class="fas fa-exclamation-circle text-red-500 mr-3"></i>
+                            <p class="text-sm text-red-700">{{ error }}</p>
+                        </div>
+                    </div>
+                    {% endif %}
 
-        {% if error %}
-        <div class="error">{{ error }}</div>
-        {% endif %}
+                    <form method="POST" class="space-y-6">
+                        <!-- Name Field -->
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-user text-indigo-500 mr-2"></i>Full Name
+                            </label>
+                            <input type="text" 
+                                   id="name" 
+                                   name="name" 
+                                   value="{{ form_data.get('name', '') }}"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"
+                                   required>
+                        </div>
 
-        <form method="POST">
-            <label for="name">Name</label>
-            <input id="name" type="text" name="name" value="{{ form_data.name | default('') }}" required>
+                        <!-- Email Field -->
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-envelope text-indigo-500 mr-2"></i>Email Address
+                            </label>
+                            <input type="email" 
+                                   id="email" 
+                                   name="email" 
+                                   value="{{ form_data.get('email', '') }}"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"
+                                   required>
+                        </div>
 
-            <label for="email">Email</label>
-            <input id="email" type="email" name="email" value="{{ form_data.email | default('') }}" required>
+                        <!-- Skills Field -->
+                        <div>
+                            <label for="skills" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-code text-indigo-500 mr-2"></i>Skills
+                            </label>
+                            <input type="text" 
+                                   id="skills" 
+                                   name="skills" 
+                                   value="{{ form_data.get('skills', '') }}"
+                                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"
+                                   required>
+                            <p class="mt-1 text-xs text-gray-500">
+                        </div>
 
-            <label for="skills">Skills</label>
-            <input id="skills" type="text" name="skills" placeholder="Python, UI, Research" value="{{ form_data.skills | default('') }}" required>
+                        <!-- Role Field -->
+                                                <div>
+                            <label for="role" class="block text-sm font-medium text-gray-700 mb-2">
+                                <i class="fas fa-users-cog text-indigo-500 mr-2"></i>Team Role
+                            </label>
+                            <select id="role" 
+                                    name="role" 
+                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"
+                                    required>
+                                <option value="" disabled {% if not form_data.get('role') %}selected{% endif %}></option>
+                                <option value="Coder (Backend)" {% if form_data.get('role') == 'Coder (Backend)' %}selected{% endif %}>Coder (Backend)</option>
+                                <option value="Coder (Frontend)" {% if form_data.get('role') == 'Coder (Frontend)' %}selected{% endif %}>Coder (Frontend)</option>
+                                <option value="UI/UX Designer" {% if form_data.get('role') == 'UI/UX Designer' %}selected{% endif %}>UI/UX Designer</option>
+                                <option value="Researcher" {% if form_data.get('role') == 'Researcher' %}selected{% endif %}>Researcher</option>
+                                <option value="Documentation Lead" {% if form_data.get('role') == 'Documentation Lead' %}selected{% endif %}>Documentation Lead</option>
+                                <option value="Tester / QA" {% if form_data.get('role') == 'Tester / QA' %}selected{% endif %}>Tester / QA</option>
+                                <option value="Presenter" {% if form_data.get('role') == 'Presenter' %}selected{% endif %}>Presenter</option>
+                                <option value="Team Leader" {% if form_data.get('role') == 'Team Leader' %}selected{% endif %}>Team Leader</option>
+                            </select>
+                        </div>
+                        <!-- Submit Button -->
+                        <div class="pt-4">
+                            <button type="submit" 
+                                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                                <i class="fas fa-plus-circle mr-2"></i>Create Profile
+                            </button>
+                        </div>
 
-            <label for="role">Preferred Role</label>
-            <select id="role" name="role" required>
-                {% set selected_role = form_data.role | default('') %}
-                <option value="" disabled {% if not selected_role %}selected{% endif %}>Select a role</option>
-                <option value="Coder" {% if selected_role == 'Coder' %}selected{% endif %}>Coder</option>
-                <option value="Designer" {% if selected_role == 'Designer' %}selected{% endif %}>Designer</option>
-                <option value="Presenter" {% if selected_role == 'Presenter' %}selected{% endif %}>Presenter</option>
-                <option value="Tester" {% if selected_role == 'Tester' %}selected{% endif %}>Tester</option>
-                <option value="Leader" {% if selected_role == 'Leader' %}selected{% endif %}>Leader</option>
-            </select>
+                        <!-- View Profiles Link -->
+                        <div class="text-center mt-4">
+                            <a href="/profiles" class="text-sm text-indigo-600 hover:text-indigo-800 transition-colors duration-200">
+                                <i class="fas fa-arrow-right mr-1"></i>View All Profiles
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
 
-            <button type="submit">Save Profile</button>
-        </form>
+            <!-- Footer -->
+            <p class="mt-8 text-center text-xs text-gray-500">
+                Student Project Profiles · Secure and Professional
+            </p>
+        </div>
     </div>
-
 </body>
 </html>

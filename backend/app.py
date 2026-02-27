@@ -2,7 +2,7 @@ import json
 import os
 from datetime import datetime
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, url_for
 
 app = Flask(__name__)
 
@@ -56,10 +56,15 @@ def profile():
         )
         _save_profiles(profiles)
 
-        return render_template("success.html", name=name)
+        from flask import redirect, url_for
+        return redirect(url_for("view_profiles"))
 
     return render_template("profile.html", form_data={})
 
+@app.route("/profiles")
+def view_profiles():
+    profiles = _load_profiles()
+    return render_template("profiles.html", profiles=profiles)
 
 if __name__ == "__main__":
     app.run(debug=True)
