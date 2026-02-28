@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body>
+    <div class="min-h-screen">
+        <!-- Navigation Bar -->
+        <nav class="bg-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center py-4">
+                    <div class="flex items-center">
+                        <i class="fas fa-chalkboard-user text-3xl text-indigo-600 mr-3"></i>
+                        <h1 class="text-2xl font-bold text-gray-900">Faculty Dashboard</h1>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <span class="text-gray-600">{{ user.name }}</span>
+                        <a href="/logout" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+                            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Welcome Card -->
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-2">Welcome, {{ user.name }}!</h2>
+                        <p class="text-gray-600"><i class="fas fa-building mr-2"></i>{{ user.department }} Department</p>
+                    </div>
+                    <button onclick="openCreateGroupModal()" class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition shadow-lg">
+                        <i class="fas fa-plus mr-2"></i>Create Group
+                    </button>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center">
+                        <div class="bg-blue-100 rounded-full p-3 mr-4">
+                            <i class="fas fa-users text-blue-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-600 text-sm">Total Students</p>
+                            <p class="text-3xl font-bold text-gray-900">{{ profiles|length }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center">
+                        <div class="bg-green-100 rounded-full p-3 mr-4">
+                            <i class="fas fa-layer-group text-green-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-600 text-sm">Active Groups</p>
+                            <p class="text-3xl font-bold text-gray-900">{{ groups|length }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center">
+                        <div class="bg-purple-100 rounded-full p-3 mr-4">
+                            <i class="fas fa-comments text-purple-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-600 text-sm">Feedback Given</p>
+                            <p class="text-3xl font-bold text-gray-900">{{ comments|length }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow p-6">
+                    <div class="flex items-center">
+                        <div class="bg-yellow-100 rounded-full p-3 mr-4">
+                            <i class="fas fa-star text-yellow-600 text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-600 text-sm">Avg. Group Size</p>
+                            <p class="text-3xl font-bold text-gray-900">
+                                {% if groups %}
+                                    {{ (groups|map(attribute='members')|map('length')|sum / groups|length)|round(1) }}
+                                {% else %}
+                                    0
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="flex space-x-4 mb-6 bg-white rounded-lg p-4 shadow overflow-x-auto">
+                <button class="tab-btn active px-4 py-2 rounded-lg font-semibold text-indigo-600 bg-indigo-50 cursor-pointer whitespace-nowrap" data-tab="groups">
+                    <i class="fas fa-layer-group mr-2"></i>Groups
+                </button>
+                <button class="tab-btn px-4 py-2 rounded-lg font-semibold text-gray-600 hover:text-indigo-600 cursor-pointer whitespace-nowrap" data-tab="generate">
+                    <i class="fas fa-magic mr-2"></i>Generate Groups
+                </button>
+                <button class="tab-btn px-4 py-2 rounded-lg font-semibold text-gray-600 hover:text-indigo-600 cursor-pointer whitespace-nowrap" data-tab="students">
+                    <i class="fas fa-graduation-cap mr-2"></i>Students
+                </button>
+                <button class="tab-btn px-4 py-2 rounded-lg font-semibold text-gray-600 hover:text-indigo-600 cursor-pointer whitespace-nowrap" data-tab="feedback">
+                    <i class="fas fa-comments mr-2"></i>Feedback
+                </button>
+            </div>
+
+            <!-- Groups Tab -->
+            <div id="groups" class="tab-content">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {% if groups %}
+                        {% for group in groups %}
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition">
+                            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-4">
+                                <h3 class="text-xl font-bold text-white">{{ group.name }}</h3>
+                                <p class="text-indigo-100 text-sm">{{ group.project_title }}</p>
+                            </div>
+                            <div class="p-6">
+                                <div class="mb-4">
+                                    <p class="text-sm text-gray-700 mb-2">
+                                        <i class="fas fa-users mr-2 text-indigo-600"></i>
+                                        <strong>Members ({{ group.members|length }}):</strong>
+                                    </p>
+                                    <ul class="list-disc list-inside space-y-1">
+                                        {% for member in group.members %}
+                                        <li class="text-xs text-gray-600">{{ member }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                                <div class="flex space-x-2 mt-4">
+                                    <form method="POST" action="/group/{{ group.id }}/shuffle" class="flex-1">
+                                        <button type="submit" class="w-full px-3 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition">
+                                            <i class="fas fa-shuffle mr-1"></i>Shuffle
+                                        </button>
+                                    </form>
+                                    <a href="/group/{{ group.id }}/view" class="flex-1 text-center px-3 py-2 bg-indigo-600 text-white text-sm rounded-lg hover:bg-indigo-700 transition">
+                                        <i class="fas fa-eye mr-1"></i>View
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                    <div class="col-span-2 bg-white rounded-xl shadow p-8 text-center">
+                        <i class="fas fa-inbox text-gray-400 text-5xl mb-4"></i>
+                        <p class="text-gray-600 mb-4">No groups created yet</p>
+                        <button onclick="openCreateGroupModal()" class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                            <i class="fas fa-plus mr-2"></i>Create First Group
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Generate Groups Tab -->
+            <div id="generate" class="tab-content hidden">
+                <div class="bg-white rounded-xl shadow p-8">
+                    <div class="mb-8">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">
+                            <i class="fas fa-magic mr-2 text-indigo-600"></i>Generate Balanced Groups
+                        </h3>
+                        <p class="text-gray-600">Use our intelligent algorithm to automatically create balanced groups based on skills and roles.</p>
+                    </div>
+
+                    <div id="generationForm" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Project Title</label>
+                            <input type="text" id="projectTitle" placeholder="e.g., Web Development Project" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Number of Groups</label>
+                            <input type="number" id="numGroups" min="2" max="20" value="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                        </div>
+                        <div class="flex items-end">
+                            <button type="button" onclick="previewGroups()" class="w-full px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-semibold">
+                                <i class="fas fa-eye mr-2"></i>Preview Groups
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Preview Results -->
+                    <div id="previewResults" class="hidden">
+                        <div class="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                            <p class="text-blue-800">
+                                <i class="fas fa-info-circle mr-2"></i>
+                                <strong>Balance Score: </strong>
+                                <span id="avgBalanceScore">N/A</span> / 100
+                            </p>
+                        </div>
+
+                        <div id="groupPreviewContainer" class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                            <!-- Groups will be inserted here -->
+                        </div>
+
+                        <div id="suggestionsContainer" class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-8 hidden">
+                            <h4 class="font-semibold text-yellow-900 mb-4">
+                                <i class="fas fa-lightbulb mr-2"></i>Improvement Suggestions
+                            </h4>
+                            <div id="suggestionsList" class="space-y-2">
+                                <!-- Suggestions will be inserted here -->
+                            </div>
+                        </div>
+
+                        <div class="flex space-x-4">
+                            <button type="button" onclick="applyGroups()" class="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold">
+                                <i class="fas fa-check mr-2"></i>Apply Groups
+                            </button>
+                            <button type="button" onclick="resetGeneration()" class="flex-1 px-6 py-3 bg-gray-300 text-gray-900 rounded-lg hover:bg-gray-400 transition font-semibold">
+                                <i class="fas fa-redo mr-2"></i>Preview Again
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Loading Indicator -->
+                    <div id="loadingIndicator" class="hidden text-center py-8">
+                        <div class="inline-block">
+                            <i class="fas fa-spinner fa-spin text-4xl text-indigo-600 mb-4"></i>
+                            <p class="text-gray-600 font-semibold">Generating balanced groups...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Students Tab -->
+            <div id="students" class="tab-content hidden">
+                <div class="bg-white rounded-xl shadow overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
+                                <tr>
+                                    <th class="px-6 py-4 text-left font-semibold">Name</th>
+                                    <th class="px-6 py-4 text-left font-semibold">Email</th>
+                                    <th class="px-6 py-4 text-left font-semibold">Role</th>
+                                    <th class="px-6 py-4 text-left font-semibold">Skills</th>
+                                    <th class="px-6 py-4 text-left font-semibold">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y">
+                                {% for profile in profiles %}
+                                <tr class="hover:bg-gray-50 transition">
+                                    <td class="px-6 py-4 text-gray-900 font-medium">{{ profile.name }}</td>
+                                    <td class="px-6 py-4 text-gray-600">{{ profile.email }}</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-semibold">
+                                            {{ profile.role }}
+                                        </span>
+                                    </td>
+                                    <td class="px-6 py-4 text-gray-600 text-sm">{{ profile.skills }}</td>
+                                    <td class="px-6 py-4">
+                                        <div class="flex space-x-2">
+                                            <a href="/feedback/student/{{ profile.email }}" class="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition">
+                                                <i class="fas fa-comment mr-1"></i>Feedback
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Feedback Tab -->
+            <div id="feedback" class="tab-content hidden">
+                <div class="bg-white rounded-xl shadow p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                        <i class="fas fa-history mr-2 text-indigo-600"></i>Feedback History
+                    </h3>
+                    {% if comments %}
+                    <div class="space-y-4">
+                        {% for comment in comments %}
+                        <div class="border-l-4 border-indigo-600 bg-indigo-50 p-4 rounded">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <p class="font-semibold text-gray-900">{{ comment.student_email }}</p>
+                                    <p class="text-sm text-gray-600">{{ comment.comment }}</p>
+                                </div>
+                                <span class="px-2 py-1 bg-indigo-200 text-indigo-800 text-xs rounded font-semibold">
+                                    {{ comment.type }}
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-gray-600 text-center py-8">No feedback given yet</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Group Modal -->
+    <div id="createGroupModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl shadow-2xl p-8 max-w-2xl w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Create Group</h2>
+                <button onclick="closeCreateGroupModal()" class="text-gray-600 hover:text-gray-900">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+            </div>
+
+            <form method="POST" action="/group/create" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Group Name</label>
+                    <input type="text" name="name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Project Title</label>
+                    <input type="text" name="project_title" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Select Students</label>
+                    <div class="border border-gray-300 rounded-lg p-4 max-h-48 overflow-y-auto bg-gray-50">
+                        {% for profile in profiles %}
+                        <label class="flex items-center mb-2 cursor-pointer">
+                            <input type="checkbox" name="members" value="{{ profile.email }}" class="w-4 h-4 text-indigo-600 rounded">
+                            <span class="ml-3 text-sm text-gray-700">{{ profile.name }} ({{ profile.email }})</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="flex space-x-3 mt-6">
+                    <button type="submit" class="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-semibold">
+                        <i class="fas fa-check mr-2"></i>Create Group
+                    </button>
+                    <button type="button" onclick="closeCreateGroupModal()" class="flex-1 px-4 py-2 bg-gray-300 text-gray-900 rounded-lg hover:bg-gray-400 transition font-semibold">
+                        <i class="fas fa-times mr-2"></i>Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentPreview = null;
+
+        function openCreateGroupModal() {
+            document.getElementById('createGroupModal').classList.remove('hidden');
+        }
+
+        function closeCreateGroupModal() {
+            document.getElementById('createGroupModal').classList.add('hidden');
+        }
+
+        async function previewGroups() {
+            const projectTitle = document.getElementById('projectTitle').value;
+            const numGroups = document.getElementById('numGroups').value;
+
+            if (!projectTitle.trim()) {
+                alert('Please enter a project title');
+                return;
+            }
+
+            if (numGroups < 2) {
+                alert('Number of groups must be at least 2');
+                return;
+            }
+
+            // Show loading, hide form
+            document.getElementById('generationForm').classList.add('hidden');
+            document.getElementById('loadingIndicator').classList.remove('hidden');
+            document.getElementById('previewResults').classList.add('hidden');
+
+            try {
+                const response = await fetch('/group/shuffle/preview', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `num_groups=${encodeURIComponent(numGroups)}&project_title=${encodeURIComponent(projectTitle)}`
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to generate groups');
+                }
+
+                const data = await response.json();
+                currentPreview = data;
+
+                // Display results
+                displayPreview(data, projectTitle);
+            } catch (error) {
+                alert('Error generating groups: ' + error.message);
+            } finally {
+                document.getElementById('loadingIndicator').classList.add('hidden');
+            }
+        }
+
+        function displayPreview(data, projectTitle) {
+            const container = document.getElementById('groupPreviewContainer');
+            container.innerHTML = '';
+
+            // Display average balance score
+            const avgScore = data.avg_balance_score.toFixed(1);
+            document.getElementById('avgBalanceScore').textContent = avgScore;
+
+            // Display groups
+            data.groups.forEach((group, index) => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200 rounded-lg p-6 hover:shadow-md transition';
+                
+                const scoreColor = group.balance_score >= 75 ? 'bg-green-100 text-green-800' :
+                                   group.balance_score >= 50 ? 'bg-yellow-100 text-yellow-800' :
+                                   'bg-red-100 text-red-800';
+
+                groupDiv.innerHTML = `
+                    <div class="flex justify-between items-start mb-4">
+                        <h4 class="text-lg font-bold text-gray-900">Group ${index + 1}</h4>
+                        <span class="px-3 py-1 ${scoreColor} rounded-full text-sm font-semibold">
+                            Score: ${group.balance_score.toFixed(1)}/100
+                        </span>
+                    </div>
+                    <div class="mb-4">
+                        <p class="text-sm text-gray-700 mb-2">
+                            <i class="fas fa-users mr-2 text-indigo-600"></i>
+                            <strong>Members (${group.members.length}):</strong>
+                        </p>
+                        <ul class="space-y-1">
+                            ${group.members.map(member => `
+                                <li class="text-xs text-gray-600">
+                                    <i class="fas fa-user-circle mr-2"></i>${member}
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                    <div class="text-xs text-gray-600 pt-3 border-t border-indigo-200">
+                        <p><i class="fas fa-chart-pie mr-1"></i><strong>Role Diversity:</strong> ${(group.role_diversity * 100).toFixed(0)}%</p>
+                        <p><i class="fas fa-star mr-1"></i><strong>Skill Balance:</strong> ${(group.skill_balance * 100).toFixed(0)}%</p>
+                    </div>
+                `;
+                container.appendChild(groupDiv);
+            });
+
+            // Display suggestions if available
+            if (data.suggestions && data.suggestions.length > 0) {
+                const suggestionsList = document.getElementById('suggestionsList');
+                suggestionsList.innerHTML = '';
+                data.suggestions.forEach(suggestion => {
+                    const suggDiv = document.createElement('div');
+                    suggDiv.className = 'text-sm text-yellow-900 bg-white p-3 rounded border-l-4 border-yellow-500';
+                    suggDiv.innerHTML = `<i class="fas fa-arrow-right mr-2"></i>${suggestion}`;
+                    suggestionsList.appendChild(suggDiv);
+                });
+                document.getElementById('suggestionsContainer').classList.remove('hidden');
+            }
+
+            // Show results and form
+            document.getElementById('previewResults').classList.remove('hidden');
+            document.getElementById('generationForm').classList.add('hidden');
+        }
+
+        async function applyGroups() {
+            if (!currentPreview) {
+                alert('No preview available');
+                return;
+            }
+
+            const projectTitle = document.getElementById('projectTitle').value;
+            
+            if (!confirm(`Create ${currentPreview.groups.length} groups for "${projectTitle}"?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch('/group/shuffle/apply', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        groups: currentPreview.groups,
+                        project_title: projectTitle,
+                        num_groups: currentPreview.groups.length
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText || 'Failed to apply groups');
+                }
+
+                const result = await response.json();
+                alert('Groups created successfully! Refreshing...');
+                location.reload();
+            } catch (error) {
+                alert('Error applying groups: ' + error.message);
+            }
+        }
+
+        function resetGeneration() {
+            document.getElementById('generationForm').classList.remove('hidden');
+            document.getElementById('previewResults').classList.add('hidden');
+            currentPreview = null;
+        }
+
+        // Tab switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabName = btn.dataset.tab;
+                
+                document.querySelectorAll('.tab-content').forEach(tab => {
+                    tab.classList.add('hidden');
+                });
+                
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    b.classList.remove('active', 'bg-indigo-50', 'text-indigo-600');
+                    b.classList.add('text-gray-600');
+                });
+                
+                document.getElementById(tabName).classList.remove('hidden');
+                btn.classList.add('active', 'bg-indigo-50', 'text-indigo-600');
+            });
+        });
+    </script>
+</body>
+</html>
