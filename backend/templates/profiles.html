@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Profiles Dashboard</title>
+    <title>Teamly · Profiles Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -11,12 +11,38 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0b1220 0%, #111827 45%, #1f2937 100%);
             min-height: 100vh;
+        }
+        .glass-ui .bg-white {
+            background: rgba(15, 23, 42, 0.62) !important;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(148, 163, 184, 0.2) !important;
+        }
+        .glass-ui .bg-gray-50 { background-color: #0f172a !important; }
+        .glass-ui .bg-blue-50, .glass-ui .bg-purple-50, .glass-ui .bg-emerald-50, .glass-ui .bg-yellow-50, .glass-ui .bg-cyan-50, .glass-ui .bg-rose-50, .glass-ui .bg-orange-50 {
+            background-color: rgba(30, 41, 59, 0.75) !important;
+        }
+        .glass-ui .text-gray-900 { color: #f8fafc !important; }
+        .glass-ui .text-gray-800 { color: #e2e8f0 !important; }
+        .glass-ui .text-gray-700 { color: #cbd5e1 !important; }
+        .glass-ui .text-gray-600, .glass-ui .text-gray-500 { color: #94a3b8 !important; }
+        .glass-ui .border-gray-200, .glass-ui .border-gray-300 { border-color: #334155 !important; }
+        .glass-ui .shadow, .glass-ui .shadow-md, .glass-ui .shadow-lg, .glass-ui .shadow-xl {
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.42) !important;
+        }
+        .glass-ui .bg-white {
+            transform-style: preserve-3d;
+            transition: transform 0.28s ease, box-shadow 0.28s ease;
+        }
+        .glass-ui .bg-white:hover {
+            transform: translateY(-5px) rotateX(1.4deg) rotateY(-1.4deg);
+            box-shadow: 0 20px 42px rgba(0, 0, 0, 0.48) !important;
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 glass-ui">
     <div class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
         <div class="max-w-7xl mx-auto space-y-8">
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
@@ -24,7 +50,7 @@
                     <div class="flex items-center">
                         <i class="fas fa-chart-pie text-4xl text-indigo-100 mr-4"></i>
                         <div>
-                            <h1 class="text-3xl font-bold text-white">Student Profiles Dashboard</h1>
+                            <h1 class="text-3xl font-bold text-white">Teamly · Profiles Dashboard</h1>
                             <p class="text-indigo-100 text-sm">Complete overview of team composition and activity</p>
                         </div>
                     </div>
@@ -223,7 +249,7 @@
                 {% endif %}
             </div>
 
-            <p class="text-center text-xs text-indigo-100">Student Project Profiles Dashboard · Real-time analytics overview</p>
+            <p class="text-center text-xs text-indigo-100">Teamly · Real-time analytics overview</p>
         </div>
     </div>
     <script id="dashboard-chart-data" type="application/json">

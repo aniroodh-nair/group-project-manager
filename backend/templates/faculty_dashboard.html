@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faculty Dashboard</title>
+    <title>Teamly · Faculty Dashboard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -11,12 +11,50 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #0b1220 0%, #111827 45%, #1f2937 100%);
             min-height: 100vh;
+        }
+        .dark-pro .bg-white { background-color: rgba(17, 24, 39, 0.96) !important; }
+        .dark-pro .bg-gray-50 { background-color: #0f172a !important; }
+        .dark-pro .bg-gray-100 { background-color: #1f2937 !important; }
+        .dark-pro .bg-blue-50, .dark-pro .bg-green-50, .dark-pro .bg-purple-50, .dark-pro .bg-yellow-50, .dark-pro .bg-indigo-50, .dark-pro .bg-cyan-50, .dark-pro .bg-rose-50, .dark-pro .bg-emerald-50, .dark-pro .bg-orange-50 {
+            background-color: #172033 !important;
+        }
+        .dark-pro .text-gray-900 { color: #f8fafc !important; }
+        .dark-pro .text-gray-800 { color: #e2e8f0 !important; }
+        .dark-pro .text-gray-700 { color: #cbd5e1 !important; }
+        .dark-pro .text-gray-600, .dark-pro .text-gray-500 { color: #94a3b8 !important; }
+        .dark-pro .border-gray-200, .dark-pro .border-gray-300 { border-color: #334155 !important; }
+        .dark-pro .divide-y > :not([hidden]) ~ :not([hidden]) { border-color: #334155 !important; }
+        .dark-pro input, .dark-pro select, .dark-pro textarea {
+            background-color: #0f172a !important;
+            color: #e2e8f0 !important;
+            border-color: #334155 !important;
+        }
+        .dark-pro input::placeholder, .dark-pro textarea::placeholder { color: #64748b !important; }
+        .dark-pro .shadow, .dark-pro .shadow-md, .dark-pro .shadow-lg, .dark-pro .shadow-xl, .dark-pro .shadow-2xl {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35) !important;
+        }
+        .glass-ui .bg-white {
+            background: rgba(15, 23, 42, 0.62) !important;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(148, 163, 184, 0.2) !important;
+        }
+        .glass-ui .shadow, .glass-ui .shadow-md, .glass-ui .shadow-lg, .glass-ui .shadow-xl, .glass-ui .shadow-2xl {
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.42) !important;
+        }
+        .glass-ui .bg-white {
+            transform-style: preserve-3d;
+            transition: transform 0.28s ease, box-shadow 0.28s ease;
+        }
+        .glass-ui .bg-white:hover {
+            transform: translateY(-5px) rotateX(1.6deg) rotateY(-1.6deg);
+            box-shadow: 0 20px 42px rgba(0, 0, 0, 0.48) !important;
         }
     </style>
 </head>
-<body>
+<body class="dark-pro glass-ui">
     <div class="min-h-screen">
         <!-- Navigation Bar -->
         <nav class="bg-white shadow-lg">
@@ -24,7 +62,7 @@
                 <div class="flex justify-between items-center py-4">
                     <div class="flex items-center">
                         <i class="fas fa-chalkboard-user text-3xl text-indigo-600 mr-3"></i>
-                        <h1 class="text-2xl font-bold text-gray-900">Faculty Dashboard</h1>
+                        <h1 class="text-2xl font-bold text-gray-900">Teamly · Faculty Dashboard</h1>
                     </div>
                     <div class="flex items-center space-x-4">
                         <span class="text-gray-600">{{ user.name }}</span>
@@ -108,6 +146,15 @@
                 </div>
             </div>
 
+            <div class="bg-white rounded-xl shadow p-6 mb-8">
+                <h3 class="text-xl font-bold text-gray-900 mb-4">
+                    <i class="fas fa-chart-pie mr-2 text-indigo-600"></i>Student Role Distribution
+                </h3>
+                <div class="h-72">
+                    <canvas id="studentRoleChart"></canvas>
+                </div>
+            </div>
+
             <!-- Tab Navigation -->
             <div class="flex space-x-4 mb-6 bg-white rounded-lg p-4 shadow overflow-x-auto">
                 <button class="tab-btn active px-4 py-2 rounded-lg font-semibold text-indigo-600 bg-indigo-50 cursor-pointer whitespace-nowrap" data-tab="groups">
@@ -121,6 +168,9 @@
                 </button>
                 <button class="tab-btn px-4 py-2 rounded-lg font-semibold text-gray-600 hover:text-indigo-600 cursor-pointer whitespace-nowrap" data-tab="feedback">
                     <i class="fas fa-comments mr-2"></i>Feedback
+                </button>
+                <button class="tab-btn px-4 py-2 rounded-lg font-semibold text-gray-600 hover:text-indigo-600 cursor-pointer whitespace-nowrap" data-tab="submissions">
+                    <i class="fas fa-link mr-2"></i>Submissions
                 </button>
             </div>
 
@@ -224,6 +274,9 @@
                             <button type="button" onclick="applyGroups()" class="flex-1 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold">
                                 <i class="fas fa-check mr-2"></i>Apply Groups
                             </button>
+                            <button type="button" onclick="reshuffleGroups()" class="flex-1 px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-semibold">
+                                <i class="fas fa-shuffle mr-2"></i>Reshuffle
+                            </button>
                             <button type="button" onclick="resetGeneration()" class="flex-1 px-6 py-3 bg-gray-300 text-gray-900 rounded-lg hover:bg-gray-400 transition font-semibold">
                                 <i class="fas fa-redo mr-2"></i>Preview Again
                             </button>
@@ -307,6 +360,64 @@
                     {% endif %}
                 </div>
             </div>
+
+            <!-- Submissions Tab -->
+            <div id="submissions" class="tab-content hidden">
+                <div class="bg-white rounded-xl shadow p-6">
+                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                        <i class="fas fa-link mr-2 text-indigo-600"></i>Student Work Submissions
+                    </h3>
+
+                    {% if submissions %}
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50 text-gray-700">
+                                <tr>
+                                    <th class="px-4 py-3 text-left font-semibold">Student</th>
+                                    <th class="px-4 py-3 text-left font-semibold">Group</th>
+                                    <th class="px-4 py-3 text-left font-semibold">Project</th>
+                                    <th class="px-4 py-3 text-left font-semibold">Submitted At</th>
+                                    <th class="px-4 py-3 text-left font-semibold">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y">
+                                {% for submission in submissions %}
+                                <tr class="hover:bg-gray-50">
+                                    <td class="px-4 py-3">
+                                        <p class="font-medium text-gray-900">{{ submission.student_name }}</p>
+                                        <p class="text-xs text-gray-500">{{ submission.student_email }}</p>
+                                    </td>
+                                    <td class="px-4 py-3 text-gray-700">{{ submission.group_name }}</td>
+                                    <td class="px-4 py-3 text-gray-700">{{ submission.project_title or '-' }}</td>
+                                    <td class="px-4 py-3 text-gray-600">{{ submission.submitted_at[:19].replace('T', ' ') if submission.submitted_at else 'N/A' }}</td>
+                                    <td class="px-4 py-3">
+                                        <div class="flex items-center gap-2">
+                                            <a href="{{ submission.submission_link }}" target="_blank" rel="noopener noreferrer" class="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition">
+                                                <i class="fas fa-external-link-alt mr-1"></i>Open Link
+                                            </a>
+                                            {% if submission.group_id %}
+                                            <a href="/group/{{ submission.group_id }}/view" class="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition">
+                                                <i class="fas fa-eye mr-1"></i>View Group
+                                            </a>
+                                            {% endif %}
+                                        </div>
+                                        {% if submission.note %}
+                                        <p class="text-xs text-gray-500 mt-2">{{ submission.note }}</p>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <div class="text-center py-10">
+                        <i class="fas fa-inbox text-gray-400 text-4xl mb-3"></i>
+                        <p class="text-gray-600">No student submissions yet.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
 
@@ -357,6 +468,33 @@
 
     <script>
         let currentPreview = null;
+
+        const roleLabels = {{ role_labels|tojson }};
+        const roleValues = {{ role_values|tojson }};
+
+        const roleChartCanvas = document.getElementById('studentRoleChart');
+        if (roleChartCanvas && roleLabels.length) {
+            new Chart(roleChartCanvas, {
+                type: 'doughnut',
+                data: {
+                    labels: roleLabels,
+                    datasets: [{
+                        data: roleValues,
+                        backgroundColor: ['#4F46E5', '#0EA5E9', '#10B981', '#F59E0B', '#EC4899', '#8B5CF6', '#14B8A6', '#F43F5E'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
 
         function openCreateGroupModal() {
             document.getElementById('createGroupModal').classList.remove('hidden');
@@ -515,6 +653,10 @@
             document.getElementById('generationForm').classList.remove('hidden');
             document.getElementById('previewResults').classList.add('hidden');
             currentPreview = null;
+        }
+
+        function reshuffleGroups() {
+            previewGroups();
         }
 
         // Tab switching

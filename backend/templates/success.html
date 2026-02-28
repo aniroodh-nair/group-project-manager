@@ -1,31 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Profile Saved</title>
+    <title>Teamly · Profile Saved</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #f5f7fb;
+            background: linear-gradient(135deg, #0b1220 0%, #111827 45%, #1f2937 100%);
             margin: 0;
             padding: 0;
+            color: #e2e8f0;
         }
         .card {
             max-width: 520px;
             margin: 80px auto;
-            background: #fff;
+            background: rgba(15, 23, 42, 0.62);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(148, 163, 184, 0.22);
             padding: 28px 32px;
             border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.42);
             text-align: center;
+            transform-style: preserve-3d;
+            transition: transform 0.28s ease, box-shadow 0.28s ease;
+        }
+        .card:hover {
+            transform: translateY(-6px) rotateX(1.8deg) rotateY(-1.8deg);
+            box-shadow: 0 22px 48px rgba(0, 0, 0, 0.5);
         }
         h2 {
             margin-top: 0;
-            color: #1f2a44;
+            color: #f8fafc;
         }
         a {
             display: inline-block;
             margin-top: 16px;
-            color: #2d6cdf;
+            color: #a5b4fc;
             text-decoration: none;
             font-weight: 600;
         }

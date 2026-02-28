@@ -26,5 +26,36 @@
     "name": "Aniroodh Nair",
     "role": "student",
     "department": "Computer Science"
+  },
+  "rahul@gmail.com": {
+    "email": "rahul@gmail.com",
+    "password": "1234",
+    "name": "Rahul Krishna",
+    "role": "student",
+    "department": "Computer Science"
+  },
+  "rahul7@gmail.com": {
+    "email": "rahul7@gmail.com",
+    "password": "1234",
+    "name": "Rahul Krishna",
+    "role": "student",
+    "department": "Computer Science",
+    "specialization": "Data Science"
+  },
+  "nimitha@gmail.com": {
+    "email": "nimitha@gmail.com",
+    "password": "1234",
+    "name": "Nimitha S Nair",
+    "role": "student",
+    "department": "Computer Science",
+    "specialization": "AI/ML"
+  },
+  "rose@gmail.com": {
+    "email": "rose@gmail.com",
+    "password": "1234",
+    "name": "Rose Sara Mathew",
+    "role": "student",
+    "department": "Information Technology",
+    "specialization": "Web Development"
   }
 }

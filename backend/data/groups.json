@@ -3,44 +3,45 @@
     "id": 1,
     "name": "Group 1",
     "members": [
-      "24ct257@mgits.ac.in",
-      "aniroodh657@gmail.com"
+      "aniroodh657@gmail.com",
+      "student1@mgits.ac.in"
     ],
+    "member_project_roles": {
+      "aniroodh657@gmail.com": "Coder (Backend)",
+      "student1@mgits.ac.in": "Team Leader"
+    },
     "project_title": "Web development",
-    "created_at": "2026-02-28T05:06:49.898575+00:00",
+    "created_at": "2026-02-28T11:30:40.148891+00:00",
     "status": "active",
-    "balance_score": 100,
-    "last_shuffled": "2026-02-28T05:24:15.097543+00:00",
-    "grade": {
-      "score": 86.0,
-      "max_score": 100.0,
-      "remarks": "Can make the ppt better",
-      "faculty_email": "faculty1@mgits.ac.in",
-      "faculty_name": "Dr. Priya Kumar",
-      "graded_at": "2026-02-28T08:21:56.180265+00:00"
-    }
+    "balance_score": 100
   },
   {
     "id": 2,
     "name": "Group 2",
     "members": [
-      "24ct254@mgits.ac.in",
-      "24ct504@mgits.ac.in"
+      "student2@mgits.ac.in",
+      "rahul@gmail.com"
     ],
+    "member_project_roles": {
+      "student2@mgits.ac.in": "Coder (Frontend)",
+      "rahul@gmail.com": "Coder (Backend)"
+    },
     "project_title": "Web development",
-    "created_at": "2026-02-28T05:06:49.898575+00:00",
+    "created_at": "2026-02-28T11:30:40.148891+00:00",
     "status": "active",
-    "balance_score": 92.86,
-    "last_shuffled": "2026-02-28T05:27:03.449571+00:00"
+    "balance_score": 75
   },
   {
     "id": 3,
     "name": "Group 3",
     "members": [
-      "24ct366@mgits.ac.in"
+      "nimitha@gmail.com"
     ],
+    "member_project_roles": {
+      "nimitha@gmail.com": "Tester / QA"
+    },
     "project_title": "Web development",
-    "created_at": "2026-02-28T05:06:49.898575+00:00",
+    "created_at": "2026-02-28T11:30:40.148891+00:00",
     "status": "active",
     "balance_score": 100
   },
@@ -48,10 +49,13 @@
     "id": 4,
     "name": "Group 4",
     "members": [
-      "24ct336@mgits.ac.in"
+      "rahul7@gmail.com"
     ],
+    "member_project_roles": {
+      "rahul7@gmail.com": "Researcher"
+    },
     "project_title": "Web development",
-    "created_at": "2026-02-28T05:06:49.898575+00:00",
+    "created_at": "2026-02-28T11:30:40.148891+00:00",
     "status": "active",
     "balance_score": 100
   }

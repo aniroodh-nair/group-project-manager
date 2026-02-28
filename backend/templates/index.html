@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Group Project Manager</title>
+    <title>Teamly</title>
 
 <style>
 body {
     font-family: Arial, sans-serif;
     text-align: center;
-    background: #f4f6f9;
+    background: linear-gradient(135deg, #0b1220 0%, #111827 45%, #1f2937 100%);
+    color: #e2e8f0;
 }
 
 button {
@@ -30,21 +31,31 @@ button:hover { background: #1366d6; }
 }
 
 .group-card {
-    background: white;
+    background: rgba(15, 23, 42, 0.62);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(148, 163, 184, 0.22);
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0px 4px 15px rgba(0,0,0,0.12);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.42);
+    transform-style: preserve-3d;
+    transition: transform 0.28s ease, box-shadow 0.28s ease;
 }
 
-.group-card h3 { color: #2f80ed; }
+.group-card:hover {
+    transform: translateY(-6px) rotateX(1.8deg) rotateY(-1.8deg);
+    box-shadow: 0 22px 48px rgba(0, 0, 0, 0.5);
+}
+
+.group-card h3 { color: #a5b4fc; }
 .group-card ul { list-style: none; padding: 0; }
-.group-card li { padding: 6px 0; border-bottom: 1px solid #eee; }
+.group-card li { padding: 6px 0; border-bottom: 1px solid #334155; }
 </style>
 </head>
 
 <body>
 
-<h1>Group Project Manager</h1>
+<h1>Teamly</h1>
 
 <button onclick="generateGroups()">Generate Groups</button>
 <h3 id="result"></h3>

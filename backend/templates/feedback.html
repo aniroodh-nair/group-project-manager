@@ -3,11 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Feedback</title>
+    <title>Teamly · Student Feedback</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0b1220 0%, #111827 45%, #1f2937 100%);
+            min-height: 100vh;
+        }
+        .glass-ui .bg-white {
+            background: rgba(15, 23, 42, 0.62) !important;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(148, 163, 184, 0.2) !important;
+        }
+        .glass-ui .bg-gray-50 { background-color: #0f172a !important; }
+        .glass-ui .bg-indigo-50 { background-color: rgba(30, 41, 59, 0.75) !important; }
+        .glass-ui .text-gray-900 { color: #f8fafc !important; }
+        .glass-ui .text-gray-700 { color: #cbd5e1 !important; }
+        .glass-ui .text-gray-600, .glass-ui .text-gray-500 { color: #94a3b8 !important; }
+        .glass-ui .border-gray-300 { border-color: #334155 !important; }
+        .glass-ui textarea, .glass-ui select {
+            background-color: rgba(15, 23, 42, 0.58) !important;
+            color: #e2e8f0 !important;
+            border-color: #334155 !important;
+        }
+        .glass-ui .bg-white {
+            transform-style: preserve-3d;
+            transition: transform 0.28s ease, box-shadow 0.28s ease;
+        }
+        .glass-ui .bg-white:hover {
+            transform: translateY(-5px) rotateX(1.4deg) rotateY(-1.4deg);
+            box-shadow: 0 20px 42px rgba(0, 0, 0, 0.48);
+        }
+    </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 glass-ui">
     <nav class="bg-white shadow">
         <div class="max-w-4xl mx-auto px-4 py-4">
             <a href="/faculty/dashboard" class="text-indigo-600 hover:text-indigo-700">

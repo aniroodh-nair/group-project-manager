@@ -1,4 +1,4 @@
-# Group Project Management System
+# Teamly
 
 A web-based system to manage semester-long group projects.
 

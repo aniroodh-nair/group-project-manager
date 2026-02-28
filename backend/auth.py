@@ -23,7 +23,7 @@ def save_users(users):
         json.dump(users, file, indent=2)
 
 
-def register_user(email, password, name, role, department=""):
+def register_user(email, password, name, role, department="", specialization=""):
     """Register a new user"""
     users = load_users()
     if email in users:
@@ -34,7 +34,8 @@ def register_user(email, password, name, role, department=""):
         "password": password,  # In production, use proper hashing!
         "name": name,
         "role": role,  # "student", "faculty", "hod", "admin"
-        "department": department
+        "department": department,
+        "specialization": specialization
     }
     save_users(users)
     return True, "User registered successfully"
@@ -83,8 +84,15 @@ def get_current_user():
     """Get current logged-in user from session"""
     if "user_email" not in session:
         return None
+
+    email = session.get("user_email")
+    users = load_users()
+    user_record = users.get(email, {})
+
     return {
-        "email": session.get("user_email"),
+        "email": email,
         "name": session.get("user_name"),
-        "role": session.get("user_role")
+        "role": session.get("user_role"),
+        "department": user_record.get("department", ""),
+        "specialization": user_record.get("specialization", ""),
     }

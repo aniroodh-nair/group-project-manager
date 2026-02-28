@@ -3,11 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Group Details</title>
+    <title>Teamly · Group Details</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #0b1220 0%, #111827 45%, #1f2937 100%);
+            min-height: 100vh;
+        }
+        .dark-pro .bg-white { background-color: rgba(17, 24, 39, 0.96) !important; }
+        .dark-pro .bg-gray-50 { background-color: #0f172a !important; }
+        .dark-pro .bg-blue-50, .dark-pro .bg-green-50, .dark-pro .bg-purple-50, .dark-pro .bg-yellow-50, .dark-pro .bg-indigo-50 {
+            background-color: #172033 !important;
+        }
+        .dark-pro .text-gray-900 { color: #f8fafc !important; }
+        .dark-pro .text-gray-800 { color: #e2e8f0 !important; }
+        .dark-pro .text-gray-700 { color: #cbd5e1 !important; }
+        .dark-pro .text-gray-600, .dark-pro .text-gray-500 { color: #94a3b8 !important; }
+        .dark-pro .border-gray-200, .dark-pro .border-gray-300 { border-color: #334155 !important; }
+        .dark-pro input, .dark-pro select, .dark-pro textarea {
+            background-color: #0f172a !important;
+            color: #e2e8f0 !important;
+            border-color: #334155 !important;
+        }
+        .glass-ui .bg-white {
+            background: rgba(15, 23, 42, 0.62) !important;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(148, 163, 184, 0.2) !important;
+        }
+    </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 dark-pro glass-ui">
     <nav class="bg-white shadow">
         <div class="max-w-7xl mx-auto px-4 py-4">
             <a href="/dashboard" class="text-indigo-600 hover:text-indigo-700">
@@ -59,12 +86,92 @@
                     <p class="font-semibold text-gray-900">{{ member.name }}</p>
                     <p class="text-sm text-gray-600">{{ member.email }}</p>
                     <div class="mt-3">
-                        <p class="text-xs text-gray-600"><strong>Role:</strong> {{ member.role }}</p>
+                        <p class="text-xs text-gray-600"><strong>Assigned Group Role:</strong> {{ member.assigned_group_role or '-' }}</p>
+                        <p class="text-xs text-gray-600"><strong>Profile Role:</strong> {{ member.role }}</p>
                         <p class="text-xs text-gray-600"><strong>Skills:</strong> {{ member.skills }}</p>
                     </div>
                 </div>
                 {% endfor %}
             </div>
+        </div>
+
+        <!-- Team Leader Task Split -->
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">
+                <i class="fas fa-list-check mr-2 text-indigo-600"></i>Task Split & Assignments
+            </h2>
+
+            {% if can_manage_tasks %}
+            <form method="POST" action="/group/{{ group.id }}/tasks/add" class="border border-indigo-100 bg-indigo-50 rounded-lg p-5 mb-6">
+                <h3 class="text-sm font-semibold text-indigo-800 mb-3">Team Leader: assign work to members</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Task Title</label>
+                        <input type="text" name="title" required placeholder="e.g., Build login page" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Assign To</label>
+                        <select name="assigned_to" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <option value="" disabled selected>Select member</option>
+                            {% for member in members %}
+                            <option value="{{ member.email }}">{{ member.name }} ({{ member.email }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Due Date (Optional)</label>
+                        <input type="date" name="due_date" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Priority</label>
+                        <select name="priority" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                            <option value="low">Low</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Description (Optional)</label>
+                    <textarea name="description" rows="3" placeholder="Task details..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                </div>
+                <button type="submit" class="mt-4 px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                    <i class="fas fa-plus mr-2"></i>Assign Task
+                </button>
+            </form>
+            {% endif %}
+
+            {% if tasks %}
+            <div class="space-y-3">
+                {% for task in tasks %}
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <p class="font-semibold text-gray-900">{{ task.title }}</p>
+                            {% if task.description %}
+                            <p class="text-sm text-gray-700 mt-1">{{ task.description }}</p>
+                            {% endif %}
+                            <p class="text-xs text-gray-500 mt-2">
+                                Assigned to: {{ task.assigned_to_name }} ({{ task.assigned_to }})
+                                {% if task.due_date %} · Due: {{ task.due_date }}{% endif %}
+                            </p>
+                        </div>
+                        <div class="text-right">
+                            <span class="px-2 py-1 rounded text-xs font-semibold 
+                                {% if task.priority == 'high' %}bg-red-100 text-red-800
+                                {% elif task.priority == 'low' %}bg-green-100 text-green-800
+                                {% else %}bg-yellow-100 text-yellow-800{% endif %}">
+                                {{ task.priority|upper }}
+                            </span>
+                            <p class="text-xs text-gray-500 mt-2">{{ task.status|upper }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-sm text-gray-500">No tasks assigned yet.</p>
+            {% endif %}
         </div>
 
         <!-- Grading Section -->
@@ -120,6 +227,66 @@
                     <i class="fas fa-check mr-2"></i>{% if group.grade %}Update Grade{% else %}Add Grade{% endif %}
                 </button>
             </form>
+            {% endif %}
+        </div>
+
+        <!-- Work Submissions -->
+        <div class="bg-white rounded-lg shadow-lg p-8 mb-6">
+            <h2 class="text-2xl font-bold text-gray-900 mb-4">
+                <i class="fas fa-link mr-2 text-indigo-600"></i>Work Submissions
+            </h2>
+
+            {% if can_submit_work %}
+            <form method="POST" action="/group/{{ group.id }}/submit-work" enctype="multipart/form-data" class="border border-indigo-100 bg-indigo-50 rounded-lg p-5 mb-6">
+                <h3 class="text-sm font-semibold text-indigo-800 mb-3">Submit your work (link or file)</h3>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Work Link (Google Drive, GitHub, Figma, etc.)</label>
+                    <input type="url" name="submission_link" placeholder="https://..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Or upload file</label>
+                    <input type="file" name="submission_file" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Note (Optional)</label>
+                    <textarea name="note" rows="3" placeholder="What did you submit?" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></textarea>
+                </div>
+                <button type="submit" class="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition">
+                    <i class="fas fa-paper-plane mr-2"></i>Submit Work
+                </button>
+            </form>
+            {% endif %}
+
+            {% if submissions %}
+            <div class="space-y-4">
+                {% for submission in submissions %}
+                <div class="border border-gray-200 rounded-lg p-4">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <p class="font-semibold text-gray-900">{{ submission.student_name }} <span class="text-xs text-gray-500">({{ submission.student_email }})</span></p>
+                            {% if submission.submission_link %}
+                            <a href="{{ submission.submission_link }}" target="_blank" rel="noopener noreferrer" class="text-sm text-indigo-600 hover:text-indigo-800 break-all">
+                                <i class="fas fa-external-link-alt mr-1"></i>{{ submission.submission_link }}
+                            </a>
+                            {% endif %}
+                            {% if submission.submission_file %}
+                            <p class="mt-1">
+                                <a href="{{ url_for('download_submission_file', submission_id=submission.id) }}" target="_blank" rel="noopener noreferrer" class="text-sm text-indigo-600 hover:text-indigo-800 break-all">
+                                    <i class="fas fa-file-arrow-down mr-1"></i>{{ submission.submission_file_name or 'Uploaded File' }}
+                                </a>
+                            </p>
+                            {% endif %}
+                            {% if submission.note %}
+                            <p class="text-sm text-gray-700 mt-2">{{ submission.note }}</p>
+                            {% endif %}
+                        </div>
+                        <span class="text-xs text-gray-500 whitespace-nowrap">{{ submission.submitted_at[:19].replace('T', ' ') }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-sm text-gray-500">No submissions yet for this group.</p>
             {% endif %}
         </div>
 

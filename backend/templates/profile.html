@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if is_edit %}Edit Student Profile{% else %}Create Student Profile{% endif %}</title>
+    <title>{% if is_edit %}Edit Profile · Teamly{% else %}Create Profile · Teamly{% endif %}</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Font Awesome for icons -->
@@ -12,12 +12,35 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #0b1220 0%, #111827 45%, #1f2937 100%);
             min-height: 100vh;
+        }
+        .glass-ui .bg-white {
+            background: rgba(15, 23, 42, 0.62) !important;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(148, 163, 184, 0.2) !important;
+        }
+        .glass-ui .text-gray-900 { color: #f8fafc !important; }
+        .glass-ui .text-gray-700 { color: #cbd5e1 !important; }
+        .glass-ui .text-gray-600, .glass-ui .text-gray-500 { color: #94a3b8 !important; }
+        .glass-ui .border-gray-300 { border-color: #334155 !important; }
+        .glass-ui input, .glass-ui select, .glass-ui textarea {
+            background-color: rgba(15, 23, 42, 0.58) !important;
+            color: #e2e8f0 !important;
+            border-color: #334155 !important;
+        }
+        .glass-ui .bg-white {
+            transform-style: preserve-3d;
+            transition: transform 0.28s ease, box-shadow 0.28s ease;
+        }
+        .glass-ui .bg-white:hover {
+            transform: translateY(-5px) rotateX(1.6deg) rotateY(-1.6deg);
+            box-shadow: 0 20px 42px rgba(0, 0, 0, 0.48);
         }
     </style>
 </head>
-<body class="bg-gray-50">
+<body class="bg-gray-50 glass-ui">
     <div class="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
         <div class="max-w-md w-full">
             <!-- Header -->
@@ -79,10 +102,30 @@
                                    id="skills" 
                                    name="skills" 
                                    value="{{ form_data.get('skills', '') }}"
+                                   list="specialization-options"
+                                   placeholder="e.g., Python, Machine Learning"
                                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"
                                    required>
+                            <datalist id="specialization-options">
+                                <option value="Python"></option>
+                                <option value="Java"></option>
+                                <option value="JavaScript"></option>
+                                <option value="React"></option>
+                                <option value="Node.js"></option>
+                                <option value="Flask"></option>
+                                <option value="Django"></option>
+                                <option value="UI Design"></option>
+                                <option value="UX Research"></option>
+                                <option value="Machine Learning"></option>
+                                <option value="Data Analysis"></option>
+                                <option value="Database Management"></option>
+                                <option value="API Development"></option>
+                                <option value="Testing"></option>
+                                <option value="Documentation"></option>
+                                <option value="Public Speaking"></option>
+                            </datalist>
                             <p class="mt-1 text-xs text-gray-500">
-                                Separate multiple skills with commas
+                                Choose from suggestions or type your own, and separate multiple skills with commas
                             </p>
                         </div>
 
@@ -95,7 +138,7 @@
                                     name="role" 
                                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"
                                     required>
-                                <option value="" disabled {% if not form_data.get('role') %}selected{% endif %}></option>
+                                <option value="" disabled {% if not form_data.get('role') %}selected{% endif %}>Select a role</option>
                                 <option value="Coder (Backend)" {% if form_data.get('role') == 'Coder (Backend)' %}selected{% endif %}>Coder (Backend)</option>
                                 <option value="Coder (Frontend)" {% if form_data.get('role') == 'Coder (Frontend)' %}selected{% endif %}>Coder (Frontend)</option>
                                 <option value="UI/UX Designer" {% if form_data.get('role') == 'UI/UX Designer' %}selected{% endif %}>UI/UX Designer</option>
@@ -126,7 +169,7 @@
 
             <!-- Footer -->
             <p class="mt-8 text-center text-xs text-gray-500">
-                Student Project Profiles · Secure and Professional
+                Teamly · Secure and Professional
             </p>
         </div>
     </div>
