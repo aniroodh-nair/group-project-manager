@@ -1,0 +1,30 @@
+{
+  "student1@mgits.ac.in": {
+    "email": "student1@mgits.ac.in",
+    "password": "pass123",
+    "name": "Aniroodh Nair",
+    "role": "student",
+    "department": "Computer Science"
+  },
+  "student2@mgits.ac.in": {
+    "email": "student2@mgits.ac.in",
+    "password": "pass123",
+    "name": "Chris Joe Ruby",
+    "role": "student",
+    "department": "Computer Science"
+  },
+  "faculty1@mgits.ac.in": {
+    "email": "faculty1@mgits.ac.in",
+    "password": "pass123",
+    "name": "Dr. Priya Kumar",
+    "role": "faculty",
+    "department": "Computer Science"
+  },
+  "aniroodh657@gmail.com": {
+    "email": "aniroodh657@gmail.com",
+    "password": "153492768",
+    "name": "Aniroodh Nair",
+    "role": "student",
+    "department": "Computer Science"
+  }
+}

@@ -1,0 +1,31 @@
+[
+  {
+    "id": 1,
+    "student_email": "24ct257@mgits.ac.in",
+    "faculty_email": "faculty1@mgits.ac.in",
+    "faculty_name": "Dr. Priya Kumar",
+    "comment": "9/10",
+    "type": "grade",
+    "timestamp": "2026-02-28T05:27:27.809477+00:00"
+  },
+  {
+    "id": 2,
+    "student_email": "24ct257@mgits.ac.in",
+    "faculty_email": "faculty1@mgits.ac.in",
+    "faculty_name": "Dr. Priya Kumar",
+    "comment": "Please fix the timeline",
+    "type": "general",
+    "timestamp": "2026-02-28T05:29:55.333858+00:00",
+    "group_id": 1
+  },
+  {
+    "id": 3,
+    "student_email": "24ct257@mgits.ac.in",
+    "faculty_email": "faculty1@mgits.ac.in",
+    "faculty_name": "Dr. Priya Kumar",
+    "comment": "9/10",
+    "type": "grade",
+    "timestamp": "2026-02-28T05:30:09.932291+00:00",
+    "group_id": 1
+  }
+]

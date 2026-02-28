@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile Saved</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f7fb;
+            margin: 0;
+            padding: 0;
+        }
+        .card {
+            max-width: 520px;
+            margin: 80px auto;
+            background: #fff;
+            padding: 28px 32px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+        h2 {
+            margin-top: 0;
+            color: #1f2a44;
+        }
+        a {
+            display: inline-block;
+            margin-top: 16px;
+            color: #2d6cdf;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h2>Profile Saved</h2>
+        <p>Thanks, {{ name }}! Your profile has been saved.</p>
+        <a href="/profile">Create another profile</a>
+    </div>
+</body>
+</html>
