@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Profiles Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto space-y-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                <div>
+                    <div class="flex items-center">
+                        <i class="fas fa-chart-pie text-4xl text-indigo-100 mr-4"></i>
+                        <div>
+                            <h1 class="text-3xl font-bold text-white">Student Profiles Dashboard</h1>
+                            <p class="text-indigo-100 text-sm">Complete overview of team composition and activity</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <a href="/profile" class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 transition duration-300 transform hover:-translate-y-0.5 hover:shadow-lg">
+                        <i class="fas fa-plus mr-2"></i>Create Profile
+                    </a>
+                    <a href="#profiles-table" class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-indigo-700 bg-white hover:bg-gray-100 transition duration-300 transform hover:-translate-y-0.5 hover:shadow-lg">
+                        <i class="fas fa-table mr-2"></i>View Table
+                    </a>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+                <div class="bg-white rounded-xl shadow p-5 transition duration-300 hover:shadow-xl hover:-translate-y-1">
+                    <p class="text-xs uppercase tracking-wider text-gray-500">Total Profiles</p>
+                    <p class="mt-2 text-3xl font-bold text-gray-900">{{ profiles|length }}</p>
+                    <div class="mt-4">
+                        <div class="flex justify-between text-xs text-gray-500 mb-1">
+                            <span>Monthly Goal</span>
+                            <span>{{ current_month_count }}/{{ monthly_goal }}</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-indigo-600 h-2 rounded-full progress-bar" data-width="{{ monthly_progress }}"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 rounded-xl shadow p-5 transition duration-300 hover:shadow-xl hover:-translate-y-1">
+                    <p class="text-xs uppercase tracking-wider text-blue-600">Total Coders</p>
+                    <p class="mt-2 text-3xl font-bold text-blue-800">{{ total_coders }}</p>
+                    <p class="mt-2 text-xs text-blue-700">Backend: {{ backend_coders }} · Frontend: {{ frontend_coders }}</p>
+                </div>
+
+                <div class="bg-purple-50 rounded-xl shadow p-5 transition duration-300 hover:shadow-xl hover:-translate-y-1">
+                    <p class="text-xs uppercase tracking-wider text-purple-600">UI/UX Designers</p>
+                    <p class="mt-2 text-3xl font-bold text-purple-800">{{ role_counter.get('UI/UX Designer', 0) }}</p>
+                    <p class="mt-2 text-xs text-purple-700">Design-focused contributors</p>
+                </div>
+
+                <div class="bg-emerald-50 rounded-xl shadow p-5 transition duration-300 hover:shadow-xl hover:-translate-y-1">
+                    <p class="text-xs uppercase tracking-wider text-emerald-600">Team Leaders</p>
+                    <p class="mt-2 text-3xl font-bold text-emerald-800">{{ role_counter.get('Team Leader', 0) }}</p>
+                    <p class="mt-2 text-xs text-emerald-700">Project coordinators</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl shadow p-5">
+                <h2 class="text-sm font-semibold text-gray-700 uppercase tracking-wider mb-3">Other Roles</h2>
+                <div class="flex flex-wrap gap-2 text-sm">
+                    <span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-800">Researchers: {{ role_counter.get('Researcher', 0) }}</span>
+                    <span class="px-3 py-1 rounded-full bg-cyan-100 text-cyan-800">Documentation: {{ role_counter.get('Documentation Lead', 0) }}</span>
+                    <span class="px-3 py-1 rounded-full bg-rose-100 text-rose-800">Testers / QA: {{ role_counter.get('Tester / QA', 0) }}</span>
+                    <span class="px-3 py-1 rounded-full bg-orange-100 text-orange-800">Presenters: {{ role_counter.get('Presenter', 0) }}</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white rounded-xl shadow p-5 transition duration-300 hover:shadow-xl">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Role Distribution</h3>
+                    <div class="h-72">
+                        <canvas id="roleChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl shadow p-5 transition duration-300 hover:shadow-xl">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Daily Submissions (Last 7 Days)</h3>
+                    <div class="h-72">
+                        <canvas id="submissionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="bg-white rounded-xl shadow p-5">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Top 10 Skills</h3>
+                    {% if skill_stats %}
+                    <div class="space-y-3">
+                        {% for skill in skill_stats %}
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span class="text-gray-700 font-medium">{{ skill.name }}</span>
+                                <span class="text-gray-500">{{ skill.count }}</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-indigo-600 h-2.5 rounded-full progress-bar" data-width="{{ skill.percentage }}"></div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-sm text-gray-500">No skills data available yet.</p>
+                    {% endif %}
+                </div>
+
+                <div class="bg-white rounded-xl shadow p-5">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+                    {% if recent_profiles %}
+                    <div class="space-y-3">
+                        {% for profile in recent_profiles %}
+                        <div class="flex items-center justify-between p-3 rounded-lg bg-gray-50">
+                            <div class="flex items-center">
+                                <div class="h-9 w-9 rounded-full bg-indigo-100 flex items-center justify-center">
+                                    <span class="text-xs font-semibold text-indigo-800">{{ profile.name[:2]|upper }}</span>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-medium text-gray-900">{{ profile.name }}</p>
+                                    <p class="text-xs text-gray-500">{{ profile.submitted_at[:19].replace('T', ' ') if profile.submitted_at else 'N/A' }}</p>
+                                </div>
+                            </div>
+                            <span class="px-2.5 py-1 text-xs rounded-full bg-green-100 text-green-800">{{ profile.role }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-sm text-gray-500">No recent submissions yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div id="profiles-table" class="bg-white shadow-xl rounded-lg overflow-hidden">
+                <div class="px-6 py-5 border-b border-gray-200 bg-gray-50">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">
+                        <i class="fas fa-list mr-2 text-indigo-600"></i>
+                        All Student Profiles
+                    </h3>
+                </div>
+
+                {% if profiles %}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Skills</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Submitted</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            {% for profile in profiles %}
+                            <tr class="hover:bg-gray-50 transition-colors duration-200">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <div class="flex items-center">
+                                        <div class="flex-shrink-0 h-10 w-10 bg-indigo-100 rounded-full flex items-center justify-center">
+                                            <span class="text-indigo-800 font-medium text-sm">{{ profile.name[:2]|upper }}</span>
+                                        </div>
+                                        <div class="ml-4 text-sm font-medium text-gray-900">{{ profile.name }}</div>
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ profile.email }}</td>
+                                <td class="px-6 py-4">
+                                    <div class="flex flex-wrap gap-1">
+                                        {% for skill in profile.skills.split(',')[:3] %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">{{ skill.strip() }}</span>
+                                        {% endfor %}
+                                        {% if profile.skills.split(',')|length > 3 %}
+                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">+{{ profile.skills.split(',')|length - 3 }}</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">{{ profile.role }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ profile.submitted_at[:10] }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                    <form method="POST" action="{{ url_for('delete_profile') }}" class="inline">
+                                        <input type="hidden" name="email" value="{{ profile.email }}">
+                                        <button type="submit" class="text-red-600 hover:text-red-900 transition-colors duration-200" title="Delete" onclick="return confirm('Delete this profile?');">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                    <a href="{{ url_for('profile_detail', email=profile.email) }}" class="text-indigo-600 hover:text-indigo-900 ml-3 transition-colors duration-200" title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{{ url_for('edit_profile', email=profile.email) }}" class="text-blue-600 hover:text-blue-900 ml-3 transition-colors duration-200" title="Edit">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-12">
+                    <i class="fas fa-user-slash text-6xl text-gray-400 mb-4"></i>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No profiles yet</h3>
+                    <p class="text-gray-500 mb-6">Get started by creating your first student profile.</p>
+                    <a href="/profile" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700">
+                        <i class="fas fa-plus mr-2"></i>Create Profile
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <p class="text-center text-xs text-indigo-100">Student Project Profiles Dashboard · Real-time analytics overview</p>
+        </div>
+    </div>
+    <script id="dashboard-chart-data" type="application/json">
+        {{ {
+            'role_labels': chart_role_labels,
+            'role_values': chart_role_values,
+            'submission_labels': submission_labels,
+            'submission_values': submission_values
+        }|tojson }}
+    </script>
+
+    <script>
+        document.querySelectorAll('.progress-bar').forEach((bar) => {
+            const width = Number(bar.dataset.width || 0);
+            bar.style.width = `${Math.max(0, Math.min(100, width))}%`;
+        });
+
+        const chartDataElement = document.getElementById('dashboard-chart-data');
+        const chartData = chartDataElement ? JSON.parse(chartDataElement.textContent) : {
+            role_labels: [],
+            role_values: [],
+            submission_labels: [],
+            submission_values: []
+        };
+
+        const roleLabels = chartData.role_labels || [];
+        const roleValues = chartData.role_values || [];
+        const submissionLabels = chartData.submission_labels || [];
+        const submissionValues = chartData.submission_values || [];
+
+        const roleCtx = document.getElementById('roleChart');
+        if (roleCtx && roleLabels.length) {
+            new Chart(roleCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: roleLabels,
+                    datasets: [{
+                        data: roleValues,
+                        backgroundColor: ['#4F46E5', '#0EA5E9', '#10B981', '#F59E0B', '#EC4899', '#8B5CF6', '#14B8A6', '#F43F5E'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    }
+                }
+            });
+        }
+
+        const submissionCtx = document.getElementById('submissionChart');
+        if (submissionCtx) {
+            new Chart(submissionCtx, {
+                type: 'line',
+                data: {
+                    labels: submissionLabels,
+                    datasets: [{
+                        label: 'Submissions',
+                        data: submissionValues,
+                        fill: true,
+                        tension: 0.35,
+                        borderColor: '#4F46E5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.12)',
+                        pointBackgroundColor: '#4F46E5'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                precision: 0
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Detail</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <div class="min-h-screen py-8 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex items-center justify-between mb-6">
+                <a href="{{ url_for('view_profiles') }}" class="inline-flex items-center text-sm font-medium text-indigo-100 hover:text-white transition-colors duration-200">
+                    <i class="fas fa-arrow-left mr-2"></i>Back to Profiles
+                </a>
+                <div class="space-x-3">
+                    <a href="{{ url_for('edit_profile', email=profile.email) }}" class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors duration-200">
+                        <i class="fas fa-edit mr-2"></i>Edit
+                    </a>
+                    <form method="POST" action="{{ url_for('delete_profile') }}" class="inline">
+                        <input type="hidden" name="email" value="{{ profile.email }}">
+                        <button type="submit" class="inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium text-white bg-red-600 hover:bg-red-700 transition-colors duration-200" onclick="return confirm('Delete this profile?');">
+                            <i class="fas fa-trash mr-2"></i>Delete
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="bg-white shadow-xl rounded-xl overflow-hidden">
+                <div class="px-6 py-6 border-b border-gray-200 bg-gray-50">
+                    <div class="flex items-center">
+                        <div class="h-14 w-14 rounded-full bg-indigo-100 flex items-center justify-center">
+                            <span class="text-indigo-800 font-semibold text-lg">{{ profile.name[:2]|upper }}</span>
+                        </div>
+                        <div class="ml-4">
+                            <h1 class="text-2xl font-bold text-gray-900">{{ profile.name }}</h1>
+                            <p class="text-sm text-gray-500">Student Profile Detail</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Email</h2>
+                        <p class="text-gray-900 break-all"><i class="fas fa-envelope mr-2 text-indigo-500"></i>{{ profile.email }}</p>
+                    </div>
+
+                    <div>
+                        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Role</h2>
+                        <span class="px-3 py-1 inline-flex text-sm font-semibold rounded-full bg-green-100 text-green-800">{{ profile.role }}</span>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Skills</h2>
+                        <div class="flex flex-wrap gap-2">
+                            {% for skill in profile.skills.split(',') %}
+                            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">{{ skill.strip() }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="px-6 pb-6">
+                    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Activity / History</h2>
+                    <div class="space-y-3">
+                        <div class="flex items-start">
+                            <div class="mt-1 h-2.5 w-2.5 rounded-full bg-indigo-500"></div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-gray-900">Profile created</p>
+                                <p class="text-xs text-gray-500">{{ profile.submitted_at[:19].replace('T', ' ') if profile.submitted_at else 'N/A' }}</p>
+                            </div>
+                        </div>
+                        {% if profile.updated_at %}
+                        <div class="flex items-start">
+                            <div class="mt-1 h-2.5 w-2.5 rounded-full bg-blue-500"></div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium text-gray-900">Profile updated</p>
+                                <p class="text-xs text-gray-500">{{ profile.updated_at[:19].replace('T', ' ') }}</p>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
