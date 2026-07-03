@@ -1,0 +1,11 @@
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend/data:/app/backend/data
+    environment:
+      - FLASK_ENV=production
+      - FLASK_APP=backend.app
+    command: python -m flask run --host=0.0.0.0
